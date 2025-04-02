@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  username  String     @unique
+  password  String
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  exercises Exercise[]
+  favorites Favorite[]
+  saves     Save[]
+  ratings   Rating[]
+
+  @@map("users")
+}
+
+model Exercise {
+  id              String     @id @default(uuid())
+  name            String
+  description     String
+  difficultyLevel Int        @map("difficulty_level")
+  isPublic        Boolean    @default(true) @map("is_public")
+  creatorId       String     @map("creator_id")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+  creator         User       @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  favorites       Favorite[]
+  saves           Save[]
+  ratings         Rating[]
+
+  @@index([name])
+  @@index([difficultyLevel])
+  @@index([isPublic])
+  @@index([creatorId])
+  @@map("exercises")
+}
+
+model Favorite {
+  userId     String   @map("user_id")
+  exerciseId String   @map("exercise_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@id([userId, exerciseId])
+  @@map("favorites")
+}
+
+model Save {
+  userId     String   @map("user_id")
+  exerciseId String   @map("exercise_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@id([userId, exerciseId])
+  @@map("saves")
+}
+
+model Rating {
+  userId     String   @map("user_id")
+  exerciseId String   @map("exercise_id")
+  value      Int
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  @@id([userId, exerciseId])
+  @@map("ratings")
+}

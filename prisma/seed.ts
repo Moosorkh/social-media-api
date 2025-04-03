@@ -4,81 +4,105 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
+  // Clear existing data
+  await prisma.rating.deleteMany();
+  await prisma.save.deleteMany();
+  await prisma.favorite.deleteMany();
+  await prisma.exercise.deleteMany();
+  await prisma.user.deleteMany();
+
+  console.log('Seeding database...');
+
   // Create users
-  const user1 = await prisma.user.upsert({
-    where: { username: 'admin' },
-    update: {},
-    create: {
-      username: 'admin',
-      password: await bcrypt.hash('password123', 10),
+  const password = await bcrypt.hash('password123', 10);
+  
+  const user1 = await prisma.user.create({
+    data: {
+      username: 'testuser1',
+      password,
     },
   });
 
-  const user2 = await prisma.user.upsert({
-    where: { username: 'user' },
-    update: {},
-    create: {
-      username: 'user',
-      password: await bcrypt.hash('password123', 10),
+  const user2 = await prisma.user.create({
+    data: {
+      username: 'testuser2',
+      password,
     },
   });
 
-  console.log('Users created:', user1, user2);
+  console.log('Created users:', { user1: user1.id, user2: user2.id });
 
   // Create exercises
-  const exercise1 = await prisma.exercise.upsert({
-    where: { id: '1' },
-    update: {},
-    create: {
-      id: '1',
-      name: 'Push-Up',
-      description: 'Standard push-up exercise for upper body strength.',
+  const exercise1 = await prisma.exercise.create({
+    data: {
+      name: 'Push-ups',
+      description: 'Basic upper body exercise',
+      difficultyLevel: 2,
+      isPublic: true,
+      creatorId: user1.id,
+    },
+  });
+
+  const exercise2 = await prisma.exercise.create({
+    data: {
+      name: 'Squats',
+      description: 'Lower body compound movement',
       difficultyLevel: 3,
       isPublic: true,
       creatorId: user1.id,
     },
   });
 
-  const exercise2 = await prisma.exercise.upsert({
-    where: { id: '2' },
-    update: {},
-    create: {
-      id: '2',
-      name: 'Squat',
-      description: 'Basic squat exercise for lower body.',
-      difficultyLevel: 2,
-      isPublic: true,
-      creatorId: user1.id,
-    },
-  });
-
-  const exercise3 = await prisma.exercise.upsert({
-    where: { id: '3' },
-    update: {},
-    create: {
-      id: '3',
-      name: 'Plank',
-      description: 'Core strengthening exercise.',
-      difficultyLevel: 2,
-      isPublic: true,
-      creatorId: user2.id,
-    },
-  });
-
-  const exercise4 = await prisma.exercise.upsert({
-    where: { id: '4' },
-    update: {},
-    create: {
-      id: '4',
-      name: 'Advanced Handstand',
-      description: 'Advanced upper body exercise.',
-      difficultyLevel: 5,
+  const exercise3 = await prisma.exercise.create({
+    data: {
+      name: 'Private Exercise',
+      description: 'Only visible to creator',
+      difficultyLevel: 1,
       isPublic: false,
       creatorId: user2.id,
     },
   });
 
-  console.log('Exercises created:', exercise1, exercise2, exercise3, exercise4);
+  console.log('Created exercises:', { 
+    exercise1: exercise1.id, 
+    exercise2: exercise2.id,
+    exercise3: exercise3.id,
+  });
+
+  // Create favorites
+  const favorite1 = await prisma.favorite.create({
+    data: {
+      userId: user2.id,
+      exerciseId: exercise1.id,
+    },
+  });
+
+  // Create saves
+  const save1 = await prisma.save.create({
+    data: {
+      userId: user2.id,
+      exerciseId: exercise2.id,
+    },
+  });
+
+  // Create ratings
+  const rating1 = await prisma.rating.create({
+    data: {
+      userId: user2.id,
+      exerciseId: exercise1.id,
+      value: 5,
+    },
+  });
+
+  const rating2 = await prisma.rating.create({
+    data: {
+      userId: user1.id,
+      exerciseId: exercise2.id,
+      value: 4,
+    },
+  });
+
+  console.log('Created relationships');
 }
 
 main()

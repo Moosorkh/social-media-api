@@ -2,6 +2,7 @@ import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/commo
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class ExercisesService {
@@ -22,7 +23,7 @@ export class ExercisesService {
     const { name, description, difficultyLevel, sortBy } = query;
     
     // Build the where clause for filtering
-    const where = {
+    const where: Prisma.ExerciseWhereInput = {
       OR: [
         { isPublic: true },
         { creatorId: userId },

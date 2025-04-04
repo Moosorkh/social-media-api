@@ -16,16 +16,16 @@ async function bootstrap() {
 
   // Swagger setup
   const config = new DocumentBuilder()
-    .setTitle('Prehab API')
-    .setDescription('Exercise tracking API with social features')
-    .setVersion('1.0')
-    .addTag('auth')
-    .addTag('exercises')
-    .addTag('favorites')
-    .addTag('saves')
-    .addTag('ratings')
-    .addBearerAuth()
-    .build();
+  .setTitle('Prehab API')
+  .setDescription('Exercise tracking API with social features')
+  .setVersion('1.0')
+  .addTag('auth', 'Authentication operations')
+  .addTag('exercises', 'Exercise management operations')
+  .addTag('favorites', 'Exercise favorites operations')
+  .addTag('saves', 'Exercise saves operations')
+  .addTag('ratings', 'Exercise ratings operations')
+  .addBearerAuth()
+  .build();
   
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

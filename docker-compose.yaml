@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:15
@@ -13,6 +11,22 @@ services:
       POSTGRES_DB: prehab_db
     volumes:
       - pgdata:/var/lib/postgresql/data
+      
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: prehab-api
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/prehab_db"
+      JWT_SECRET: "123456"
+      JWT_EXPIRES_IN: "7d"
+      JWT_REFRESH_EXPIRES_IN: "30d"
+      PORT: 3000
 
 volumes:
   pgdata:

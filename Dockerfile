@@ -21,4 +21,4 @@ RUN npx prisma generate
 RUN npm run build
 
 # Start the application
-CMD ["node", "dist/src/main.js"]
+CMD sh -c "npx prisma migrate deploy && npx prisma db seed && node dist/src/main.js"

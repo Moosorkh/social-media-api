@@ -1,4 +1,4 @@
-# Prehab API
+# Social Media API
 
 A RESTful API for exercise tracking with authentication and social features, built with **NestJS** and **Prisma**.
 

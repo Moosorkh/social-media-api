@@ -1,20 +1,18 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
 import { CreateExerciseDto } from './dto/create-exercise.dto';
 import { UpdateExerciseDto } from './dto/update-exercise.dto';
 import { Prisma } from '@prisma/client';
+import { ExerciseRepository } from './repositories/exercise.repository';
 
 @Injectable()
 export class ExercisesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private exerciseRepository: ExerciseRepository) {}
 
   async create(createExerciseDto: CreateExerciseDto, userId: string) {
-    return this.prisma.exercise.create({
-      data: {
-        ...createExerciseDto,
-        creator: {
-          connect: { id: userId },
-        },
+    return this.exerciseRepository.create({
+      ...createExerciseDto,
+      creator: {
+        connect: { id: userId },
       },
     });
   }
@@ -41,32 +39,11 @@ export class ExercisesService {
       orderBy = { createdAt: 'desc' };
     }
 
-    return this.prisma.exercise.findMany({
-      where,
-      orderBy,
-      include: {
-        _count: {
-          select: {
-            favorites: true,
-            saves: true,
-          },
-        },
-      },
-    });
+    return this.exerciseRepository.findMany(where, orderBy);
   }
 
   async findOne(id: string, userId: string) {
-    const exercise = await this.prisma.exercise.findUnique({
-      where: { id },
-      include: {
-        _count: {
-          select: {
-            favorites: true,
-            saves: true,
-          },
-        },
-      },
-    });
+    const exercise = await this.exerciseRepository.findOne(id);
 
     if (!exercise) {
       throw new NotFoundException('Exercise not found');
@@ -80,9 +57,7 @@ export class ExercisesService {
   }
 
   async update(id: string, updateExerciseDto: UpdateExerciseDto, userId: string) {
-    const exercise = await this.prisma.exercise.findUnique({
-      where: { id },
-    });
+    const exercise = await this.exerciseRepository.findOne(id);
 
     if (!exercise) {
       throw new NotFoundException('Exercise not found');
@@ -93,16 +68,11 @@ export class ExercisesService {
       throw new ForbiddenException('You do not have permission to update this exercise');
     }
 
-    return this.prisma.exercise.update({
-      where: { id },
-      data: updateExerciseDto,
-    });
+    return this.exerciseRepository.update(id, updateExerciseDto);
   }
 
   async remove(id: string, userId: string) {
-    const exercise = await this.prisma.exercise.findUnique({
-      where: { id },
-    });
+    const exercise = await this.exerciseRepository.findOne(id);
 
     if (!exercise) {
       throw new NotFoundException('Exercise not found');
@@ -112,8 +82,6 @@ export class ExercisesService {
       throw new ForbiddenException('You do not have permission to delete this exercise');
     }
 
-    return this.prisma.exercise.delete({
-      where: { id },
-    });
+    return this.exerciseRepository.delete(id);
   }
 }

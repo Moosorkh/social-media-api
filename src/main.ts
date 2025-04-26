@@ -5,6 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { GlobalExceptionFilter } from './common/filters/http-exception.filter';
+import { swaggerDarkThemeCss, swaggerOptions } from './config/swagger-theme';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -34,7 +35,11 @@ async function bootstrap() {
   .build();
   
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api', app, document, {
+    customCss: swaggerDarkThemeCss,
+    customSiteTitle: 'Prehab API Documentation',
+    swaggerOptions: swaggerOptions
+  });
 
   // Get port from config
   const configService = app.get(ConfigService);

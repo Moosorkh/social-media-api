@@ -22,7 +22,7 @@ async function bootstrap() {
 
   // Swagger setup
   const config = new DocumentBuilder()
-  .setTitle('Prehab API')
+  .setTitle('Exercise Tracker API')
   .setDescription('Exercise tracking API with social features')
   .setVersion('1.0')
   .addTag('auth', 'Authentication operations')

@@ -2,7 +2,7 @@
 
 A RESTful API for exercise tracking with authentication and social features, built with **NestJS** and **Prisma**.
 
-[![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/Moosorkh/prehab-api)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repo-blue)](https://github.com/Moosorkh/social-media-api.git)
 
 ---
 
@@ -92,8 +92,8 @@ To populate `.env` file based on the provided `.env.example`
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Moosorkh/prehab-api.git
-cd prehab-api
+git clone https://github.com/Moosorkh/social-media-api.git
+cd social-media-api
 ```
 
 2. Build and start the containers:
@@ -114,8 +114,8 @@ docker compose up
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/Moosorkh/prehab-api.git
-cd prehab-api
+git clone https://github.com/Moosorkh/social-media-api.git
+cd social-media-api
 ```
 
 2. Install dependencies:
@@ -178,7 +178,7 @@ Interactive Swagger UI available at:
 ## Project Structure
 
 ```bash
-prehab-api/
+social-media-api/
 ├── prisma/                # Database schema and migrations
 │   ├── schema.prisma
 │   └── seed.ts
